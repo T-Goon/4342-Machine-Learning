@@ -10,103 +10,21 @@ def fPC (y, yhat):
     # number true over total labels
     return np.count_nonzero(compare, axis=1) / y.shape[0]
 
-def comparePredictors(first, last, predictors, X):
-    # array of pixel values predictors for each image
-    pix1 = X[first:last, predictors[:, :, 0], predictors[:, :, 1]]
-    pix2 = X[first:last, predictors[:, :, 2], predictors[:, :, 3]]
-
-    # compare all of the predictor pixels
-    return pix1 > pix2
-
 def measureAccuracyOfPredictors (predictors, X, y):
     """Returns the accuracy of a set of predictors"""
 
-    # all_comps = comparePredictors(0, (X.shape[0]//10), predictors, X)
-    # for i in np.arange(1, 10):
-    #     all_comps = np.concatenate((all_comps, 
-    #     comparePredictors((X.shape[0]//10)*i, (X.shape[0]//10)*i+1, predictors, X)), axis=0)
-
-    # all_comps = np.concatenate((all_comps, 
-    # comparePredictors((X.shape[0]//10)*9, X.shape[0], predictors, X)), axis=0)
-
-    # # array of pixel values predictors for each image
-    # pix1 = X[:(X.shape[0]//10), predictors[:, :, 0], predictors[:, :, 1]]
-    # pix2 = X[:(X.shape[0]//10), predictors[:, :, 2], predictors[:, :, 3]]
-
-    # # compare all of the predictor pixels
-    # all_comps = pix1 > pix2
-    # del pix1
-    # del pix2
-
-    # # compare pixels in 10 steps to save memory space
-    # for i in np.arange(1, 10):
-    #     pix3 = X[((X.shape[0]//10)*i):((X.shape[0]//10)*i+1), predictors[:, :, 0], predictors[:, :, 1]]
-    #     pix4 = X[((X.shape[0]//10)*i):((X.shape[0]//10)*i+1), predictors[:, :, 2], predictors[:, :, 3]]
-    #     print(pix3.shape)
-
-    #     # compare all of the predictor pixels
-    #     results = pix3 > pix4
-    #     del pix3
-    #     del pix4
-
-    #     all_comps = np.concatenate((all_comps, results), axis=0)
-    #     del results
-    # print(all_comps.shape)
-
     # array of pixel values predictors for each image
-    # pix1 = X[((X.shape[0]//10)*10):, predictors[:, :, 0], predictors[:, :, 1]]
-    # pix2 = X[((X.shape[0]//10)*10):, predictors[:, :, 2], predictors[:, :, 3]]
-
-    # # compare all of the predictor pixels
-    # all_comps = pix1 > pix2
-    # del pix1
-    # del pix2
-
-    # array of pixel values predictors for each image
-    pix1 = X[:(X.shape[0]//4), predictors[:, :, 0], predictors[:, :, 1]]
-    pix2 = X[:(X.shape[0]//4), predictors[:, :, 2], predictors[:, :, 3]]
+    pix1 = X[:, predictors[:, :, 0], predictors[:, :, 1]]
+    pix2 = X[:, predictors[:, :, 2], predictors[:, :, 3]]
 
     # compare all of the predictor pixels
-    results1 = pix1 > pix2
+    results = pix1 > pix2
     del pix1
     del pix2
 
-    pix3 = X[(X.shape[0]//4):((X.shape[0]//4)*2), predictors[:, :, 0], predictors[:, :, 1]]
-    pix4 = X[(X.shape[0]//4):((X.shape[0]//4)*2), predictors[:, :, 2], predictors[:, :, 3]]
-
-    # compare all of the predictor pixels
-    results2 = pix3 > pix4
-    del pix3
-    del pix4
-
-    pix5 = X[((X.shape[0]//4)*2):((X.shape[0]//4)*3), predictors[:, :, 0], predictors[:, :, 1]]
-    pix6 = X[((X.shape[0]//4)*2):((X.shape[0]//4)*3), predictors[:, :, 2], predictors[:, :, 3]]
-
-    # compare all of the predictor pixels
-    results3 = pix5 > pix6
-    del pix5
-    del pix6
-
-    pix7 = X[((X.shape[0]//4)*3):((X.shape[0]//4)*4), predictors[:, :, 0], predictors[:, :, 1]]
-    pix8 = X[((X.shape[0]//4)*3):((X.shape[0]//4)*4), predictors[:, :, 2], predictors[:, :, 3]]
-
-    # compare all of the predictor pixels
-    results4 = pix7 > pix8
-    del pix7
-    del pix8
-
-    all_comps = np.concatenate((results1, results2), axis=0)
-    del results1
-    del results2
-
-    all_comps = np.concatenate((all_comps, results3), axis=0)
-    del results3
-    all_comps = np.concatenate((all_comps, results4), axis=0)
-    del results4
-
     # average all of the predictors
-    results_avg = np.mean(all_comps, axis=2)
-    del all_comps
+    results_avg = np.mean(results, axis=2)
+    del results
 
     # convert to boolean
     results = np.greater(results_avg, np.full(results_avg.shape, .5))
@@ -116,7 +34,7 @@ def measureAccuracyOfPredictors (predictors, X, y):
 
 def stepwiseRegression (trainingFaces, trainingLabels, testingFaces, testingLabels, n):
     """Trains the classifier with stepwise regression"""
-    show = False
+    batch_size = 100
 
     predictors = np.full((5, 4), None)
 
@@ -133,8 +51,30 @@ def stepwiseRegression (trainingFaces, trainingLabels, testingFaces, testingLabe
         # all possible new predictors
         all_predictors[:, i, :] = all_indexs
 
-        # measure accuracy
-        acc = measureAccuracyOfPredictors(all_predictors, trainingFaces[:n], trainingLabels[:n])
+        # measure accuracy on training data
+        # do in batches to save memory
+        batch_num = 0
+        acc = list()
+        while(batch_num < n):
+
+            if(n - batch_num >= batch_size):
+                
+                acc.append(measureAccuracyOfPredictors(all_predictors, 
+                trainingFaces[batch_num:(batch_num+batch_size)], 
+                trainingLabels[batch_num:(batch_num+batch_size)]))
+
+                batch_num += batch_size
+
+            elif(n - batch_num < batch_size):
+                acc.append(measureAccuracyOfPredictors(all_predictors, 
+                trainingFaces[batch_num:], 
+                trainingLabels[batch_num:]))
+
+                batch_num = n
+
+        # mean accuraccy from all batches to find total accuracy on all images
+        acc = np.array(acc)
+        acc = np.mean(acc, axis=0)
 
         # find index of best predictor
         max = np.argmax(acc)
@@ -148,11 +88,35 @@ def stepwiseRegression (trainingFaces, trainingLabels, testingFaces, testingLabe
         print("N: {} Iteration: {} Training Accuracy: {}".format(n, i, acc[max]))
 
         # Print test accuracy
-        test_acc = measureAccuracyOfPredictors(np.array([all_predictors[max]]), testingFaces, testingLabels)
+        # measure accuracy on testing data
+        batch_num = 0
+        test_acc = list()
+        while(batch_num < testingFaces.shape[0]):
+
+            if(testingFaces.shape[0] - batch_num >= batch_size):
+                
+                test_acc.append(measureAccuracyOfPredictors(np.array([all_predictors[max]]), 
+                testingFaces[batch_num:(batch_num+batch_size)], 
+                testingLabels[batch_num:(batch_num+batch_size)]))
+
+                batch_num += batch_size
+
+            elif(testingFaces.shape[0] - batch_num < batch_size):
+                test_acc.append(measureAccuracyOfPredictors(np.array([all_predictors[max]]), 
+                testingFaces[batch_num:], 
+                testingLabels[batch_num:]))
+
+                batch_num = testingFaces.shape[0]
+
+        test_acc = np.array(test_acc)
+        test_acc = np.mean(test_acc, axis=0)
+
         print("N: {} Iteration: {} Test Accuracy: {}".format(n, i, test_acc[0]))
 
         print("Predictors:\n", predictors)
         print()
+
+    return predictors
 
 def loadData (which):
     faces = np.load("data\\{}ing\\{}ingFaces.npy".format(which, which))
@@ -164,9 +128,21 @@ if __name__ == "__main__":
     testingFaces, testingLabels = loadData("test")
     trainingFaces, trainingLabels = loadData("train")
 
-    # n = [400, 800, 1600, 2000]
-    n = [2000]
-    # n = entire training set
+    n = [400, 800, 1200, 1600, 2000]
+    p = None
     for i in n:
-        stepwiseRegression(trainingFaces[:i], trainingLabels[:i], testingFaces[:i], testingLabels[:i], i)
+        p = stepwiseRegression(trainingFaces[:i], trainingLabels[:i], testingFaces[:i], testingLabels[:i], i)
         print("---------------------------------")
+
+    show = True    
+    if show:        # Show an arbitrary test image in grayscale        
+        im = testingFaces[0,:,:]        
+        fig,ax = plt.subplots(1)        
+        ax.imshow(im, cmap='gray')        # Show r1,c1        
+        for r1, c1, r2, c2 in p:
+            rect = patches.Rectangle((c1 - 0.5, r1 - 0.5), 1, 1, linewidth=2, edgecolor='r', facecolor='none')        
+            ax.add_patch(rect)        # Show r2,c2        
+            rect = patches.Rectangle((c2 - 0.5, r2 - 0.5), 1, 1, linewidth=2, edgecolor='b', facecolor='none')        
+            ax.add_patch(rect)        # Display the merged result        
+
+        plt.show()

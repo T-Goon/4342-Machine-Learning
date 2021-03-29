@@ -48,9 +48,6 @@ def main():
     print("Test Problem 12: ", test_prob_12())
     print("Test Problem 13: ", test_prob_13())
 
-    a = np.arange(10)
-    print(np.arange(1, 6))
-
 def test_prob_1():
     """Test problem 1"""
 

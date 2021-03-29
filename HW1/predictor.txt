@@ -1,1 +1,184 @@
-20, 7, 17, 7
+N: 400 Iteration: 0 Training Accuracy: 0.71
+N: 400 Iteration: 0 Test Accuracy: 0.7275
+Predictors:
+ [[20 17 17 7]
+ [None None None None]
+ [None None None None]
+ [None None None None]
+ [None None None None]]
+
+N: 400 Iteration: 1 Training Accuracy: 0.7425
+N: 400 Iteration: 1 Test Accuracy: 0.7125
+Predictors:
+ [[20 17 17 7]
+ [13 4 11 14]
+ [None None None None]
+ [None None None None]
+ [None None None None]]
+
+N: 400 Iteration: 2 Training Accuracy: 0.7925
+N: 400 Iteration: 2 Test Accuracy: 0.7475
+Predictors:
+ [[20 17 17 7]
+ [13 4 11 14]
+ [21 8 16 8]
+ [None None None None]
+ [None None None None]]
+
+N: 400 Iteration: 3 Training Accuracy: 0.8125
+N: 400 Iteration: 3 Test Accuracy: 0.75
+Predictors:
+ [[20 17 17 7]
+ [13 4 11 14]
+ [21 8 16 8]
+ [13 5 21 9]
+ [None None None None]]
+
+N: 400 Iteration: 4 Training Accuracy: 0.8275
+N: 400 Iteration: 4 Test Accuracy: 0.755
+Predictors:
+ [[20 17 17 7]
+ [13 4 11 14]
+ [21 8 16 8]
+ [13 5 21 9]
+ [18 7 14 6]]
+
+---------------------------------
+N: 800 Iteration: 0 Training Accuracy: 0.7125
+N: 800 Iteration: 0 Test Accuracy: 0.71125
+Predictors:
+ [[20 7 17 7]
+ [None None None None]
+ [None None None None]
+ [None None None None]
+ [None None None None]]
+
+N: 800 Iteration: 1 Training Accuracy: 0.72625
+N: 800 Iteration: 1 Test Accuracy: 0.70125
+Predictors:
+ [[20 7 17 7]
+ [13 5 11 13]
+ [None None None None]
+ [None None None None]
+ [None None None None]]
+
+N: 800 Iteration: 2 Training Accuracy: 0.77625
+N: 800 Iteration: 2 Test Accuracy: 0.7525
+Predictors:
+ [[20 7 17 7]
+ [13 5 11 13]
+ [18 12 16 17]
+ [None None None None]
+ [None None None None]]
+
+N: 800 Iteration: 3 Training Accuracy: 0.78625
+N: 800 Iteration: 3 Test Accuracy: 0.755
+Predictors:
+ [[20 7 17 7]
+ [13 5 11 13]
+ [18 12 16 17]
+ [13 18 15 8]
+ [None None None None]]
+
+N: 800 Iteration: 4 Training Accuracy: 0.80875
+N: 800 Iteration: 4 Test Accuracy: 0.77
+Predictors:
+ [[20 7 17 7]
+ [13 5 11 13]
+ [18 12 16 17]
+ [13 18 15 8]
+ [19 8 14 16]]
+
+---------------------------------
+N: 1600 Iteration: 0 Training Accuracy: 0.711875
+N: 1600 Iteration: 0 Test Accuracy: 0.7
+Predictors:
+ [[20 7 17 7]
+ [None None None None]
+ [None None None None]
+ [None None None None]
+ [None None None None]]
+
+N: 1600 Iteration: 1 Training Accuracy: 0.718125
+N: 1600 Iteration: 1 Test Accuracy: 0.700625
+Predictors:
+ [[20 7 17 7]
+ [13 6 16 17]
+ [None None None None]
+ [None None None None]
+ [None None None None]]
+
+N: 1600 Iteration: 2 Training Accuracy: 0.763125
+N: 1600 Iteration: 2 Test Accuracy: 0.741875
+Predictors:
+ [[20 7 17 7]
+ [13 6 16 17]
+ [18 12 16 7]
+ [None None None None]
+ [None None None None]]
+
+N: 1600 Iteration: 3 Training Accuracy: 0.771875
+N: 1600 Iteration: 3 Test Accuracy: 0.74375
+Predictors:
+ [[20 7 17 7]
+ [13 6 16 17]
+ [18 12 16 7]
+ [13 5 0 19]
+ [None None None None]]
+
+N: 1600 Iteration: 4 Training Accuracy: 0.78875
+N: 1600 Iteration: 4 Test Accuracy: 0.768125
+Predictors:
+ [[20 7 17 7]
+ [13 6 16 17]
+ [18 12 16 7]
+ [13 5 0 19]
+ [19 12 16 7]]
+
+---------------------------------
+N: 2000 Iteration: 0 Training Accuracy: 0.7105
+N: 2000 Iteration: 0 Test Accuracy: 0.6936542669584245
+Predictors:
+ [[20 7 17 7]
+ [None None None None]
+ [None None None None]
+ [None None None None]
+ [None None None None]]
+
+N: 2000 Iteration: 1 Training Accuracy: 0.7155
+N: 2000 Iteration: 1 Test Accuracy: 0.7035010940919038
+Predictors:
+ [[20 7 17 7]
+ [12 5 10 13]
+ [None None None None]
+ [None None None None]
+ [None None None None]]
+
+N: 2000 Iteration: 2 Training Accuracy: 0.755
+N: 2000 Iteration: 2 Test Accuracy: 0.7456236323851203
+Predictors:
+ [[20 7 17 7]
+ [12 5 10 13]
+ [20 17 16 17]
+ [None None None None]
+ [None None None None]]
+
+N: 2000 Iteration: 3 Training Accuracy: 0.7645
+N: 2000 Iteration: 3 Test Accuracy: 0.7445295404814004
+Predictors:
+ [[20 7 17 7]
+ [12 5 10 13]
+ [20 17 16 17]
+ [13 5 10 11]
+ [None None None None]]
+
+N: 2000 Iteration: 4 Training Accuracy: 0.7795
+N: 2000 Iteration: 4 Test Accuracy: 0.7620350109409191
+Predictors:
+ [[20 7 17 7]
+ [12 5 10 13]
+ [20 17 16 17]
+ [13 5 10 11]
+ [18 12 16 7]]
+
+---------------------------------

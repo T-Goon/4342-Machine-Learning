@@ -131,7 +131,7 @@ if __name__ == "__main__":
     n = [400, 800, 1200, 1600, 2000]
     p = None
     for i in n:
-        p = stepwiseRegression(trainingFaces[:i], trainingLabels[:i], testingFaces[:i], testingLabels[:i], i)
+        p = stepwiseRegression(trainingFaces[:i], trainingLabels[:i], testingFaces, testingLabels, i)
         print("---------------------------------")
 
     show = True    

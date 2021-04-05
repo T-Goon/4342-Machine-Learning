@@ -8,7 +8,22 @@ import matplotlib.pyplot as plt
 # Given a vector x of (scalar) inputs and associated vector y of the target labels, and given
 # degree d of the polynomial, train a polynomial regression model and return the optimal weight vector.
 def trainPolynomialRegressor (x, y, d):
-    pass
+    samples = np.ones((x.shape[0], 1))
+    
+    # create feature that are powers of x
+    for i in range(1, d+1):
+        x_pow = x**i
+        x_pow = np.reshape(x_pow, (-1, 1))
+        print(x_pow.shape)
+        samples = np.concatenate((samples, x_pow), axis=1)
+    
+    # calculate the optimal weights
+    w = np.linalg.solve(
+        np.dot(samples.T, samples),
+        np.dot(samples.T, y)
+    )
+
+    return w
 
 ########################################################################################################################
 # PROBLEM 1
@@ -110,7 +125,7 @@ if __name__ == "__main__":
     print("Training Loss reg: ", fMSE(w3, Xtilde_tr, ytr))
     print("Testing Loss reg: ", fMSE(w3, Xtilde_te, yte))
 
-    with open("w.npy", "w") as f:
+    with open("w.npy", "wb") as f:
         np.save(f, w1)
         np.save(f, w2)
         np.save(f, w3)

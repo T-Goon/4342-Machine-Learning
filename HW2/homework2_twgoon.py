@@ -10,11 +10,10 @@ import matplotlib.pyplot as plt
 def trainPolynomialRegressor (x, y, d):
     samples = np.ones((x.shape[0], 1))
     
-    # create feature that are powers of x
+    # create features that are powers of x
     for i in range(1, d+1):
         x_pow = x**i
         x_pow = np.reshape(x_pow, (-1, 1))
-        print(x_pow.shape)
         samples = np.concatenate((samples, x_pow), axis=1)
     
     # calculate the optimal weights
@@ -41,7 +40,6 @@ def reshapeAndAppend1s (faces):
     faces = np.concatenate((faces, ones), axis=1)
 
     faces = faces.T
-    # print("append ",faces.shape)
 
     return faces
 
@@ -79,7 +77,6 @@ def method1 (Xtilde, y):
 
 # Given a design matrix Xtilde and labels y, train a linear regressor for Xtilde and y using gradient descent on fMSE.
 def method2 (Xtilde, y):
-
     return gradientDescent(Xtilde, y)
 
 # Given a design matrix Xtilde and labels y, train a linear regressor for Xtilde and y using gradient descent on fMSE
@@ -125,11 +122,13 @@ if __name__ == "__main__":
     print("Training Loss reg: ", fMSE(w3, Xtilde_tr, ytr))
     print("Testing Loss reg: ", fMSE(w3, Xtilde_te, yte))
 
-    with open("w.npy", "wb") as f:
-        np.save(f, w1)
-        np.save(f, w2)
-        np.save(f, w3)
+    # save weights
+    # with open("w.npy", "wb") as f:
+    #     np.save(f, w1)
+    #     np.save(f, w2)
+    #     np.save(f, w3)
 
+    # graph the trained weights
     im = np.reshape(w1[:w1.shape[0]-1], (48, 48))
     plt.imshow(im) 
     plt.title("Anlytical Method")
@@ -144,3 +143,7 @@ if __name__ == "__main__":
     plt.imshow(im) 
     plt.title("Gradient Descent with Regularization")
     plt.show()
+
+    w = trainPolynomialRegressor(np.arange(10), np.arange(10), 3)
+
+    print(np.dot(np.array([1.,   9.,  81. ,729.]), w))

@@ -55,13 +55,13 @@ def fMSE (w, Xtilde, y):
 def gradfMSE (w, Xtilde, y, alpha = 0.):
     # compute the gradient
     g = np.dot(Xtilde,
-        (np.dot(Xtilde.T, w)) - y)
+        np.dot(Xtilde.T, w) - y)
     g = g / Xtilde.shape[1]
 
     # regularization
-    w_no_bias = w[:w.shape[0]-1]
+    w_no_bias = w[:-1]
     w_no_bias = np.concatenate((w_no_bias, [0]))
-    g = g + ((alpha*2*w_no_bias) / Xtilde.shape[1])
+    g = g + ((alpha/Xtilde.shape[1]) * w_no_bias)
 
     return g
 
@@ -98,7 +98,7 @@ def gradientDescent (Xtilde, y, alpha = 0.):
 
         # update the weights
         w = w - (EPSILON * g)
-    
+
     return w
 
 if __name__ == "__main__":
@@ -129,19 +129,16 @@ if __name__ == "__main__":
     #     np.save(f, w3)
 
     # graph the trained weights
-    im = np.reshape(w1[:w1.shape[0]-1], (48, 48))
-    plt.imshow(im) 
+    plt.imshow(w1[:-1].reshape((48, 48)).T) 
     plt.title("Anlytical Method")
     plt.show()
 
-    im = np.reshape(w2[:w2.shape[0]-1], (48, 48))
-    plt.imshow(im) 
-    plt.title("Gradient Descent")
+    plt.imshow(w2[:-1].reshape((48, 48)).T) 
+    plt.title("Gradient Descent Method")
     plt.show()
 
-    im = np.reshape(w3[:w3.shape[0]-1], (48, 48))
-    plt.imshow(im) 
-    plt.title("Gradient Descent with Regularization")
+    plt.imshow(w3[:-1].reshape((48, 48)).T) 
+    plt.title("Anlytical Method")
     plt.show()
 
     w = trainPolynomialRegressor(np.arange(10), np.arange(10), 3)

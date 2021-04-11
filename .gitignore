@@ -1,0 +1,6 @@
+data/
+__pycache__/
+titanic.zip
+test.py
+titanic_score.PNG
+twgoon_predictions.csv

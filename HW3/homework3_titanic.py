@@ -13,24 +13,15 @@ if __name__ == "__main__":
     # convert Pclass to catigorical data
     Pclass = one_hot(Pclass-1, 3)
 
-    print(y.shape)
-    print(sex.shape)
-    print(Pclass.shape)
-    print(sib.shape)
-
     sex = np.array([sex])
     sib = np.array([sib])
 
     x_train = np.concatenate((sex.T, Pclass), axis=1)
     x_train = np.concatenate((x_train, sib.T), axis=1)
 
-    print(x_train.shape) # N x F array
-    # print(sib.T)
-    # print(x_train)
-
     # Train model using part of homework 3.
     W = np.random.randn(5, 2)
-    W = softmaxRegression(W, x_train.T, y, None, None, 2, epsilon=0.1, batchSize=99, epoches=30)
+    W = softmaxRegression(W, x_train.T, y, None, None, 2, epsilon=0.1, batchSize=99, epoches=200)
 
     # Load testing data
     d_test = pandas.read_csv("data\\titanic\\test.csv")
@@ -42,10 +33,6 @@ if __name__ == "__main__":
     # convert Pclass to catigorical data
     Pclass_test = one_hot(Pclass_test-1, 3)
 
-    # print(sex_test.shape)
-    # print(Pclass_test.shape)
-    # print(sib_test.shape)
-
     sex_test = np.array([sex_test])
     sib_test = np.array([sib_test])
 
@@ -54,7 +41,6 @@ if __name__ == "__main__":
 
     # Compute predictions on test set
     p = predict(W, x_test.T)
-    print(p)
     print("Training Loss: ", CE_loss(W, x_train.T, y, 2))
     print("Training Accuracy: ", calc_accuracy(W, x_train.T, y))
 

@@ -36,12 +36,12 @@ def CE_loss(w, imgs, y, classes):
     return -np.sum(y_h1 * np.log(p)) / y.shape[0]
 
 # calculate the gradient of CE loss
-def grad(w, imgs, y_hat, y):
+def grad(w, imgs, y_hat, y, c):
 
     g = np.dot(imgs, y_hat - y) / imgs.shape[1]
 
     w_no_bias = w[:-1]
-    w_no_bias = np.concatenate((w_no_bias, np.array([np.zeros(10)])), axis=0)
+    w_no_bias = np.concatenate((w_no_bias, np.array([np.zeros(c)])), axis=0)
     g = g + ((.1/imgs.shape[1]) * w_no_bias)
 
     return g
@@ -51,17 +51,8 @@ def predict(w, imgs):
     # pre-activation scores
     z = np.dot(imgs.T, w)
 
-    # y_hat = np.exp(z) / np.sum(np.exp(z))
-
-    # print(np.exp(z).shape)
-    # print(np.sum(np.exp(z)))
-    # print(np.sum(np.exp(z - np.amax(z)), axis=0).shape)
-    y_hat = np.exp(z-np.amax(z)) / (np.sum(np.exp(z - np.amax(z)), axis=0) + 1e-10)
-
     # convert to probabilities
-    # y_hat = np.zeros(z.shape)
-    # for i in range(z.shape[1]):
-    #     y_hat[:, i] = np.exp(z[:, i]*.01) / np.sum(np.exp(z[:, i]*.01))
+    y_hat = np.exp(z-np.amax(z)) / (np.sum(np.exp(z - np.amax(z)), axis=0) + 1e-10)
 
     return np.argmax(y_hat, axis=1)
 
@@ -94,21 +85,12 @@ def softmaxRegression (w, trainingImages, trainingLabels, testingImages, testing
 
             y_1h = one_hot(batch_y, classes)
 
-            g = grad(w, batch_x, y_hat_1h, y_1h)
+            g = grad(w, batch_x, y_hat_1h, y_1h, classes)
 
             w = w - (epsilon * g)
-            # print(np.amax(w))
 
             if(num_batches-i < 20 and j == epoches-1):
                 print("Training Loss Batch {}/{}: ".format(i, num_batches), CE_loss(w, trainingImages, trainingLabels, classes))
-
-        if(j%10 == 0):
-            print(j)
-            print("Training Loss: ", CE_loss(w, trainingImages, trainingLabels, 10))
-            print("Training Accuracy: ", calc_accuracy(w, trainingImages, trainingLabels))
-            print("Testing Loss: ", CE_loss(w, testingImages, testingLabels, 10))
-            print("Testing Accuracy: ", calc_accuracy(w, testingImages, testingLabels))
-            print()
 
     return w
 
@@ -145,7 +127,7 @@ if __name__ == "__main__":
 
     W = np.random.randn(785, 10)
     W = softmaxRegression(W, trainingImages, trainingLabels, testingImages, 
-    testingLabels, 10, epsilon=0.1, batchSize=100, epoches=100)
+    testingLabels, 10, epsilon=0.1, batchSize=100, epoches=200)
 
     print("Training Loss: ", CE_loss(W, trainingImages, trainingLabels, 10))
     print("Training Accuracy: ", calc_accuracy(W, trainingImages, trainingLabels))

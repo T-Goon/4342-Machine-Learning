@@ -27,43 +27,43 @@ def CE_loss(w, imgs, y, classes):
     z = np.dot(imgs.T, w)
 
     # convert to probabilities
-    p = np.exp(z) / np.sum(np.exp(z))
+    p = np.exp(z-np.amax(z)) / np.sum(np.exp(z-np.amax(z)))
     y_h1 = one_hot(y, classes)
 
     # removed 1s from the vector
     p = np.where(p != 0, p, 1**-10)
 
-    # print("p shape",  p.shape)
-    # print("y shape", y_h1.shape)
-    # print( np.log(p))
     return -np.sum(y_h1 * np.log(p)) / y.shape[0]
 
 # calculate the gradient of CE loss
-def grad(imgs, y_hat, y):
+def grad(w, imgs, y_hat, y):
 
-    return np.dot(imgs, y_hat - y) / imgs.shape[1]
+    g = np.dot(imgs, y_hat - y) / imgs.shape[1]
+
+    w_no_bias = w[:-1]
+    w_no_bias = np.concatenate((w_no_bias, np.array([np.zeros(10)])), axis=0)
+    g = g + ((.1/imgs.shape[1]) * w_no_bias)
+
+    return g
 
 # create predictions based of of the given w
 def predict(w, imgs):
     # pre-activation scores
     z = np.dot(imgs.T, w)
-    # print(z)
+
+    # y_hat = np.exp(z) / np.sum(np.exp(z))
+
+    # print(np.exp(z).shape)
+    # print(np.sum(np.exp(z)))
+    # print(np.sum(np.exp(z - np.amax(z)), axis=0).shape)
+    y_hat = np.exp(z-np.amax(z)) / (np.sum(np.exp(z - np.amax(z)), axis=0) + 1e-10)
 
     # convert to probabilities
-    y_hat = np.exp(z) / np.sum(np.exp(z))
+    # y_hat = np.zeros(z.shape)
+    # for i in range(z.shape[1]):
+    #     y_hat[:, i] = np.exp(z[:, i]*.01) / np.sum(np.exp(z[:, i]*.01))
 
     return np.argmax(y_hat, axis=1)
-
-# create predictions based of of the given w
-def predict_prob(w, imgs):
-    # pre-activation scores
-    z = np.dot(imgs.T, w)
-    # print(z)
-
-    # convert to probabilities
-    y_hat = np.exp(z) / np.sum(np.exp(z))
-
-    return y_hat
 
 # calculate the accuracy of the weights on the given data
 def calc_accuracy(w, imgs, y):
@@ -76,17 +76,10 @@ def calc_accuracy(w, imgs, y):
 # conduct stochastic gradient descent (SGD) to optimize the weight matrix W (785x10).
 # Then return W.
 def softmaxRegression (w, trainingImages, trainingLabels, testingImages, testingLabels, classes, epsilon = None, batchSize = None, epoches = 1):
-    # print("softmax shapes")
-    # print(trainingImages.shape)
-    # print(trainingLabels.shape)
-    # print(testingImages.shape)
-    # print(testingLabels.shape)
-    # print()
 
     num_batches = trainingImages.shape[1] // batchSize
 
     # train the weights
-    print(epoches)
     for j in range(epoches):
         for i in range(1, num_batches+1):
             # features and labels for current batch
@@ -101,24 +94,21 @@ def softmaxRegression (w, trainingImages, trainingLabels, testingImages, testing
 
             y_1h = one_hot(batch_y, classes)
 
-            g = grad(batch_x, y_hat_1h, y_1h)
-
-            # pre-activation scores
-            # z = np.dot(batch_x.T, w)
-            # # print(z)
-
-            # # convert to probabilities
-            # y_hat = np.exp(z) / np.sum(np.exp(z))
-
-            # y_1h = one_hot(batch_y)
-
-            # g = grad(batch_x, y_hat, y_1h)
-            
+            g = grad(w, batch_x, y_hat_1h, y_1h)
 
             w = w - (epsilon * g)
+            # print(np.amax(w))
 
-            if(num_batches-i < 20 and j == 0):
-                print("Training Loss {}/{}: ".format(i, num_batches), CE_loss(w, trainingImages, trainingLabels, classes))
+            if(num_batches-i < 20 and j == epoches-1):
+                print("Training Loss Batch {}/{}: ".format(i, num_batches), CE_loss(w, trainingImages, trainingLabels, classes))
+
+        if(j%10 == 0):
+            print(j)
+            print("Training Loss: ", CE_loss(w, trainingImages, trainingLabels, 10))
+            print("Training Accuracy: ", calc_accuracy(w, trainingImages, trainingLabels))
+            print("Testing Loss: ", CE_loss(w, testingImages, testingLabels, 10))
+            print("Testing Accuracy: ", calc_accuracy(w, testingImages, testingLabels))
+            print()
 
     return w
 
@@ -132,15 +122,6 @@ if __name__ == "__main__":
     # squash pixel values between 0 and 1
     trainingImages = trainingImages / 255
     testingImages = testingImages / 255
-
-    # print("initial shapes")
-    # print(trainingImages.shape)
-    # print(trainingLabels.shape)
-    # print(testingImages.shape)
-    # print(testingLabels.shape)
-    # print()
-    # print(np.amax(trainingImages))
-    # print(np.amax(testingImages))
 
     # shuffle the data
     trainingLabels = np.array([trainingLabels])
@@ -158,26 +139,13 @@ if __name__ == "__main__":
     testingImages = testing_data[:, :-1]
     testingLabels = testing_data[:, -1:].T[0]
 
-    # print("shuffle shapes")
-    # print(trainingImages.shape)
-    # print(trainingLabels.shape)
-    # print(testingImages.shape)
-    # print(testingLabels.shape)
-    # print()
-
     # Append a constant 1 term to each example to correspond to the bias terms
     trainingImages = append1s(trainingImages)
     testingImages = append1s(testingImages)
 
-    # print("reshape shapes")
-    # print(trainingImages.shape)
-    # print(trainingLabels.shape)
-    # print(testingImages.shape)
-    # print(testingLabels.shape)
-    # print()
-
     W = np.random.randn(785, 10)
-    W = softmaxRegression(W, trainingImages, trainingLabels, testingImages, testingLabels, 10, epsilon=0.1, batchSize=100, epoches=30)
+    W = softmaxRegression(W, trainingImages, trainingLabels, testingImages, 
+    testingLabels, 10, epsilon=0.1, batchSize=100, epoches=100)
 
     print("Training Loss: ", CE_loss(W, trainingImages, trainingLabels, 10))
     print("Training Accuracy: ", calc_accuracy(W, trainingImages, trainingLabels))
@@ -192,7 +160,7 @@ if __name__ == "__main__":
     fig=plt.figure(figsize=(28, 28))
     for i in range(1, 11):
         fig.add_subplot(2, 5, i)
-        plt.imshow(W[:-1, i-1].reshape((28, 28)).T, cmap='gray')
+        plt.imshow(W[:-1, i-1].reshape((28, 28)))
         plt.title(titles[i-1])
         
     plt.show()

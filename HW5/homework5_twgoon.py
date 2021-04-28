@@ -84,17 +84,16 @@ if __name__ == "__main__":
     all_coordinates = np.array(np.meshgrid(numbers2, numbers)).T.reshape(-1, 2)
 
     # (a) Train linear SVM using sklearn
-    # svmLinear = sklearn.svm.SVC(kernel='linear', C=0.01)
-    # svmLinear.fit(X, y)
-    # showPredictions("Linear", svmLinear, X, all_coordinates)
+    svmLinear = sklearn.svm.SVC(kernel='linear', C=0.01)
+    svmLinear.fit(X, y)
+    showPredictions("Linear", svmLinear, X, all_coordinates)
 
     # (b) Poly-3 using explicit transformation phiPoly3
-    # svm = sklearn.svm.SVC(kernel='poly', degree=3, gamma=1, coef0=1)
-    # svm.fit(X, y)
-    
-    # svmPoly = sklearn.svm.SVC(kernel='linear', C=0.01)
-    # svmPoly.fit(phiPoly3(X), y)
-    # showPredictions("phiPoly3", svmPoly, phiPoly3(X), phiPoly3(all_coordinates))
+
+    pp3 = phiPoly3(X)
+    svmPoly = sklearn.svm.SVC(kernel='linear', C=0.01)
+    svmPoly.fit(pp3, y)
+    showPredictions("phiPoly3", svmPoly, pp3, phiPoly3(all_coordinates))
     
     # (c) Poly-3 using kernel matrix constructed by kernel function kerPoly3
     kp_train = kerPoly3(X, X)
@@ -105,5 +104,15 @@ if __name__ == "__main__":
     showPredictions("kerPoly3", svmKer, kp_train, kp_test)
     
     # (d) Poly-3 using sklearn's built-in polynomial kernel
+    svmkernel = sklearn.svm.SVC(kernel='poly', C=0.01, gamma=1, coef0=1, degree=3)
+    svmkernel.fit(X, y)
+    showPredictions("kernel", svmkernel, X, all_coordinates)
 
     # (e) RBF using sklearn's built-in polynomial kernel
+    svmRBF = sklearn.svm.SVC(kernel='rbf', C=1.0, gamma=1)
+    svmRBF.fit(X, y)
+    showPredictions("RBF1", svmRBF, X, all_coordinates)
+
+    svmRBF = sklearn.svm.SVC(kernel='rbf', C=1.0, gamma=.03)
+    svmRBF.fit(X, y)
+    showPredictions("RBF2", svmRBF, X, all_coordinates)

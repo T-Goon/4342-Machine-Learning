@@ -20,8 +20,29 @@ def showPredictions (title, svm, X):  # feel free to add other parameters if des
     idxsPos = np.nonzero(pred == 1)[0]
 
     # Plot
-    plt.scatter(X[idxsNeg, 0], X[idxsNeg, 1])
     plt.scatter(X[idxsPos, 0], X[idxsPos, 1])
+    plt.scatter(X[idxsNeg, 0], X[idxsNeg, 1])
+    
+
+    plt.xlabel("Radon")
+    plt.ylabel("Asbestos")
+    plt.legend([ "Lung disease", "No lung disease" ])
+    plt.title(title)
+    plt.show()
+
+    # show dense scatter plot
+    numbers = np.arange(0, 200)
+    numbers2 = np.arange(0, 11, .1)
+    all_coordinates = np.array(np.meshgrid(numbers2, numbers)).T.reshape(-1, 2)
+
+    pred_dense = svm.predict(all_coordinates)
+
+    # Separate out the different predictions
+    idxsNeg_dense = np.nonzero(pred_dense == -1)[0]
+    idxsPos_dense = np.nonzero(pred_dense == 1)[0]
+
+    plt.scatter(all_coordinates[idxsPos_dense, 0], all_coordinates[idxsPos_dense, 1])
+    plt.scatter(all_coordinates[idxsNeg_dense, 0], all_coordinates[idxsNeg_dense, 1])
 
     plt.xlabel("Radon")
     plt.ylabel("Asbestos")
@@ -38,8 +59,8 @@ if __name__ == "__main__":
     # Show scatter-plot of the data
     idxsNeg = np.nonzero(y == -1)[0]
     idxsPos = np.nonzero(y == 1)[0]
-    plt.scatter(X[idxsNeg, 0], X[idxsNeg, 1])
     plt.scatter(X[idxsPos, 0], X[idxsPos, 1])
+    plt.scatter(X[idxsNeg, 0], X[idxsNeg, 1])
     plt.show()
 
     # (a) Train linear SVM using sklearn

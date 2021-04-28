@@ -16,14 +16,18 @@ def phiPoly3 (x):
         (x[:, 0]**3)
     ])
 
-    # print(X_poly3)
-    # print(X_poly3.shape)
-    # print(x.shape)
-
     return X_poly3.T
 
 def kerPoly3 (x, xprime):
-    pass
+    kp3 = np.zeros((x.shape[0], xprime.shape[0]))
+
+    for i in range(x.shape[0]):
+        for j in range(xprime.shape[0]):
+            kp3[i, j] = (1+np.dot(x[i].T, xprime[j]))**3
+
+    return kp3
+
+    
 
 def showPredictions (title, svm, x, denseCoords):  # feel free to add other parameters if desired
     #plt.scatter(..., ...)  # positive examples
@@ -75,23 +79,30 @@ if __name__ == "__main__":
     plt.scatter(X[idxsNeg, 0], X[idxsNeg, 1])
     plt.show()
 
-    # (a) Train linear SVM using sklearn
-    numbers = np.arange(0, 200)
+    numbers = np.arange(0, 200, 2)
     numbers2 = np.arange(0, 11, .1)
     all_coordinates = np.array(np.meshgrid(numbers2, numbers)).T.reshape(-1, 2)
-    svmLinear = sklearn.svm.SVC(kernel='linear', C=0.01)
-    svmLinear.fit(X, y)
-    showPredictions("Linear", svmLinear, X, all_coordinates)
+
+    # (a) Train linear SVM using sklearn
+    # svmLinear = sklearn.svm.SVC(kernel='linear', C=0.01)
+    # svmLinear.fit(X, y)
+    # showPredictions("Linear", svmLinear, X, all_coordinates)
 
     # (b) Poly-3 using explicit transformation phiPoly3
     # svm = sklearn.svm.SVC(kernel='poly', degree=3, gamma=1, coef0=1)
     # svm.fit(X, y)
     
-    svmLinear = sklearn.svm.SVC(kernel='linear', C=0.01)
-    svmLinear.fit(phiPoly3(X), y)
-    showPredictions("phiPoly3", svmLinear, phiPoly3(X), phiPoly3(all_coordinates))
+    # svmPoly = sklearn.svm.SVC(kernel='linear', C=0.01)
+    # svmPoly.fit(phiPoly3(X), y)
+    # showPredictions("phiPoly3", svmPoly, phiPoly3(X), phiPoly3(all_coordinates))
     
     # (c) Poly-3 using kernel matrix constructed by kernel function kerPoly3
+    kp_train = kerPoly3(X, X)
+    kp_test = kerPoly3(all_coordinates, X)
+
+    svmKer = sklearn.svm.SVC(kernel='precomputed', C=0.01)
+    svmKer.fit(kp_train, y)
+    showPredictions("kerPoly3", svmKer, kp_train, kp_test)
     
     # (d) Poly-3 using sklearn's built-in polynomial kernel
 

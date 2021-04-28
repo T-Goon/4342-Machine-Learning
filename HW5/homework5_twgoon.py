@@ -3,17 +3,34 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def phiPoly3 (x):
-    pass
+    X_poly3 = np.array([
+        np.ones(x.shape[0]),
+        (3**(1/2))*x[:, 1],
+        (3**(1/2))*x[:, 1]**2,
+        x[:, 1]**3,
+        (3**(1/2))*x[:, 0],
+        (6**(1/2))*x[:, 0]*x[:, 1],
+        (3**(1/2))*x[:, 0]*(x[:, 1]**2),
+        (3**(1/2))*(x[:, 0]**2),
+        (3**(1/2))*(x[:, 0]**2)*x[:, 1],
+        (x[:, 0]**3)
+    ])
+
+    # print(X_poly3)
+    # print(X_poly3.shape)
+    # print(x.shape)
+
+    return X_poly3.T
 
 def kerPoly3 (x, xprime):
     pass
 
-def showPredictions (title, svm, X):  # feel free to add other parameters if desired
+def showPredictions (title, svm, x, denseCoords):  # feel free to add other parameters if desired
     #plt.scatter(..., ...)  # positive examples
     #plt.scatter(..., ...)  # negative examples
 
     # get predictions from the trained SVM
-    pred = svm.predict(X)
+    pred = svm.predict(x)
 
     # Separate out the different predictions
     idxsNeg = np.nonzero(pred == -1)[0]
@@ -30,12 +47,7 @@ def showPredictions (title, svm, X):  # feel free to add other parameters if des
     plt.title(title)
     plt.show()
 
-    # show dense scatter plot
-    numbers = np.arange(0, 200)
-    numbers2 = np.arange(0, 11, .1)
-    all_coordinates = np.array(np.meshgrid(numbers2, numbers)).T.reshape(-1, 2)
-
-    pred_dense = svm.predict(all_coordinates)
+    pred_dense = svm.predict(denseCoords)
 
     # Separate out the different predictions
     idxsNeg_dense = np.nonzero(pred_dense == -1)[0]
@@ -64,11 +76,20 @@ if __name__ == "__main__":
     plt.show()
 
     # (a) Train linear SVM using sklearn
+    numbers = np.arange(0, 200)
+    numbers2 = np.arange(0, 11, .1)
+    all_coordinates = np.array(np.meshgrid(numbers2, numbers)).T.reshape(-1, 2)
     svmLinear = sklearn.svm.SVC(kernel='linear', C=0.01)
     svmLinear.fit(X, y)
-    showPredictions("Linear", svmLinear, X)
+    showPredictions("Linear", svmLinear, X, all_coordinates)
 
     # (b) Poly-3 using explicit transformation phiPoly3
+    # svm = sklearn.svm.SVC(kernel='poly', degree=3, gamma=1, coef0=1)
+    # svm.fit(X, y)
+    
+    svmLinear = sklearn.svm.SVC(kernel='linear', C=0.01)
+    svmLinear.fit(phiPoly3(X), y)
+    showPredictions("phiPoly3", svmLinear, phiPoly3(X), phiPoly3(all_coordinates))
     
     # (c) Poly-3 using kernel matrix constructed by kernel function kerPoly3
     
